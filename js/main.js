@@ -135,16 +135,55 @@ if (stackCards.length) {
 }
 
 if (contactForm && formStatus) {
-  contactForm.addEventListener("submit", (event) => {
+  const submitButton = contactForm.querySelector(".form-submit");
+  const defaultSubmitText = submitButton ? submitButton.textContent : "";
+
+  contactForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = new FormData(contactForm);
     const name = String(formData.get("name") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const service = String(formData.get("service") || "").trim();
+    const message = String(formData.get("message") || "").trim();
 
-    formStatus.textContent = name
-      ? `Thanks, ${name}. Your request is prepared for a clear next-step follow-up.`
-      : "Thanks. Your request is prepared for a clear next-step follow-up.";
+    if (!name || !email || !service || !message) {
+      formStatus.textContent = "Please complete your name, email, service needed, and project details.";
+      return;
+    }
 
-    contactForm.reset();
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Sending...";
+    }
+
+    formStatus.textContent = "";
+
+    try {
+      const response = await fetch(contactForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
+
+      formStatus.textContent = name
+        ? `Thanks, ${name}. Your request has been sent. CodX will follow up with a clear next step.`
+        : "Thanks. Your request has been sent. CodX will follow up with a clear next step.";
+
+      contactForm.reset();
+    } catch (error) {
+      formStatus.textContent = "Something went wrong. Please try again or email contact@codxweb.eu directly.";
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = defaultSubmitText;
+      }
+    }
   });
 }
