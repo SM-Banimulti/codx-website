@@ -1155,7 +1155,7 @@ button {
     justify-self: center;
     width: min(100%, 320px);
     gap: 12px;
-    margin-top: 32px;
+    margin-top: 80px;
   }
 
   .hero-actions .button-primary {
@@ -1287,7 +1287,7 @@ button {
   }
 
   .hero-actions {
-    margin-top: 28px;
+    margin-top: 76px;
   }
 
   .website-stack {
